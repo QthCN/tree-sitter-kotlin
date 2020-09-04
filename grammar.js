@@ -259,7 +259,7 @@ module.exports = grammar({
 
 		_function_value_parameter: $ => seq(
 			optional($.parameter_modifiers),
-			$.parameter,
+			field("parameter", $.parameter),
 			optional(seq("=", $._expression))
 		),
 
@@ -267,18 +267,21 @@ module.exports = grammar({
 			optional($.modifiers),
 			optional($.type_parameters),
 			"fun",
-			$.simple_identifier,
+			field("identifier", $.simple_identifier),
 			$._function_value_parameters,
 			optional(seq(":", $._type)),
 			optional($.type_constraints),
-			optional($.function_body)
+			field("function_body", optional($.function_body))
 		)),
 
-		function_body: $ => choice($._block, seq("=", $._expression)),
+		function_body: $ => choice(
+		    field("block", $._block),
+		    seq("=", field("expression", $._expression))
+		),
 		
 		variable_declaration: $ => seq(
 			// repeat($.annotation), TODO
-			$.simple_identifier,
+			field("identifier", $.simple_identifier),
 			optional(seq(":", $._type))
 		),
 
@@ -287,7 +290,7 @@ module.exports = grammar({
 			choice("val", "var"),
 			optional($.type_parameters),
 			// TODO: Receiver type
-			$.variable_declaration, // TODO: Multi-variable-declaration
+			field("variable_declaration", $.variable_declaration), // TODO: Multi-variable-declaration
 			optional($.type_constraints),
 			optional(choice(
 				seq("=", $._expression),
@@ -332,7 +335,7 @@ module.exports = grammar({
 			optional(seq(":", $._type))
 		),
 
-		parameter: $ => seq($.simple_identifier, ":", $._type),
+		parameter: $ => seq(field("identifier", $.simple_identifier), ":", $._type),
 
 		object_declaration: $ => prec.right(seq(
 			optional($.modifiers),
@@ -512,6 +515,10 @@ module.exports = grammar({
 		_semis: $ => /[\r\n]+/,
 		
 		assignment: $ => choice(
+		    prec.left(PREC.ASSIGNMENT, seq(
+		                    field("directly_assignable_expression", $.directly_assignable_expression),
+		                    "=",
+		                    field("expression", $._expression))),
 			prec.left(PREC.ASSIGNMENT, seq($.directly_assignable_expression, $._assignment_and_operator, $._expression)),
 			// TODO
 		),
@@ -610,8 +617,8 @@ module.exports = grammar({
 		call_suffix: $ => prec.left(seq(
 			// optional($.type_arguments), // TODO: Type args conflict with 'less than', see above
 			choice(
-				seq(optional($.value_arguments), $.annotated_lambda),
-				$.value_arguments
+				seq(field("value_arguments", optional($.value_arguments)), $.annotated_lambda),
+				field("value_arguments", $.value_arguments)
 			)
 		)),
 
@@ -627,7 +634,7 @@ module.exports = grammar({
 
 		value_argument: $ => seq(
 			optional($.annotation),
-			optional(seq($.simple_identifier, "=")),
+			optional(seq(field("value_argument_identifier", $.simple_identifier), "=")),
 			optional("*"),
 			$._expression
 		),
@@ -855,7 +862,7 @@ module.exports = grammar({
 		                           //       navigation operator 'split up' in Kotlin.
 
 		directly_assignable_expression: $ => choice(
-			$.simple_identifier
+			field("simple_identifier", $.simple_identifier)
 			// TODO
 		),
 
