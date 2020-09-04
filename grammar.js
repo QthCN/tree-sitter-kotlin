@@ -109,12 +109,21 @@ module.exports = grammar({
 		
 		import_header: $ => seq(
 			"import",
-			$.identifier,
-			optional(choice(seq(".*"), $.import_alias)), 
+			field("identifier", $.identifier,),
+			optional(choice(
+			            field("star", $.point_star),
+			            field("alias", $.import_alias)
+			        )
+			),
 			$._semi
 		),
 
-		import_alias: $ => seq("as", alias($.simple_identifier, $.type_identifier)),
+		point_star: $ => ".*",
+
+		import_alias: $ => seq(
+		    "as",
+		    field("alias", alias($.simple_identifier, $.type_identifier))
+		),
 
 		top_level_object: $ => seq($._declaration, optional($._semis)),
 
@@ -141,22 +150,23 @@ module.exports = grammar({
 			seq(
 				optional($.modifiers),
 				choice("class", "interface"),
-				alias($.simple_identifier, $.type_identifier),
+				field("identifier", alias($.simple_identifier, $.type_identifier)),
 				optional($.type_parameters),
 				optional($.primary_constructor),
-				optional(seq(":", $._delegation_specifiers)),
+				field("delegation_specifiers", optional(seq(":", $._delegation_specifiers))),
 				optional($.type_constraints),
-				optional($.class_body)
-			),
+				field("class_body", optional($.class_body))
+		    ),
 			seq(
 				optional($.modifiers),
-				"enum", "class",
-				alias($.simple_identifier, $.type_identifier),
+				"enum",
+				"class",
+				field("identifier", alias($.simple_identifier, $.type_identifier)),
 				optional($.type_parameters),
 				optional($.primary_constructor),
-				optional(seq(":", $._delegation_specifiers)),
+				field("delegation_specifiers", optional(seq(":", $._delegation_specifiers))),
 				optional($.type_constraints),
-				optional($.enum_class_body)
+				field("enum_class_body", optional($.enum_class_body))
 			)
 		)),
 
@@ -185,9 +195,9 @@ module.exports = grammar({
 		)),
 
 		delegation_specifier: $ => prec.left(choice(
-			$.constructor_invocation,
+			field("constructor_invocation", $.constructor_invocation),
 			$.explicit_delegation,
-			$.user_type,
+			field("user_type", $.user_type),
 			$.function_type
 		)),
 
@@ -395,7 +405,7 @@ module.exports = grammar({
 		user_type: $ => prec.right(sep1($._simple_user_type, ".")),
 		
 		_simple_user_type: $ => prec.right(seq(
-			alias($.simple_identifier, $.type_identifier),
+			field("identifier", alias($.simple_identifier, $.type_identifier)),
 			optional($.type_arguments)
 		)),
 
