@@ -69,7 +69,12 @@ module.exports = grammar({
 		[$.anonymous_function],
 
 		// Member access operator '::' conflicts with callable reference
-		[$._primary_expression, $.callable_reference]
+		[$._primary_expression, $.callable_reference],
+
+        // Possible interpretations:
+        // 1:  (jump_expression  'return'  •  _expression)
+        // 2:  (jump_expression  'return')  •  '['  …
+		[$.jump_expression]
 	],
 
 	extras: $ => [
@@ -637,7 +642,7 @@ module.exports = grammar({
 			optional($.annotation),
 			optional(seq(field("value_argument_identifier", $.simple_identifier), "=")),
 			optional("*"),
-			$._expression
+			field("expression", $._expression)
 		),
 
 		_primary_expression: $ => choice(
@@ -657,7 +662,7 @@ module.exports = grammar({
 			$.jump_expression
 		),
 
-		parenthesized_expression: $ => seq("(", $._expression, ")"),
+		parenthesized_expression: $ => seq("(", field("inner_expression", $._expression), ")"),
 
 		collection_literal: $ => seq("[", $._expression, repeat(seq(",", $._expression)), "]"),
 
@@ -668,10 +673,12 @@ module.exports = grammar({
 			$.bin_literal,
 			$.character_literal,
 			$.real_literal,
-			"null",
+			$.null_literal,
 			$.long_literal,
 			$.unsigned_literal
 		),
+
+		null_literal : $ => "null",
 
 		_string_literal: $ => choice(
 			$.line_string_literal,
@@ -820,8 +827,8 @@ module.exports = grammar({
 		finally_block: $ => seq("finally", $._block),
 
 		jump_expression: $ => choice(
-			prec.left(PREC.RETURN_OR_THROW, seq("throw", $._expression)),
-			prec.left(PREC.RETURN_OR_THROW, seq(choice("return", $._return_at), optional($._expression))),
+			seq("throw", field("throw_expression", $._expression)),
+			seq(choice("return", $._return_at), field("return_expression", optional($._expression))),
 			"continue",
 			$._continue_at,
 			"break",
