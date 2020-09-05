@@ -470,7 +470,10 @@ module.exports = grammar({
 			"@"
 		)),
 
-		control_structure_body: $ => choice($._block, $._statement),
+		control_structure_body: $ => choice(
+		    field("block", $._block),
+		    field("statement", $._statement)
+		),
 
 		_block: $ => prec(PREC.BLOCK, seq("{", optional($.statements), "}")),
 
@@ -484,27 +487,27 @@ module.exports = grammar({
 			"for",
 			"(",
 			repeat($.annotation),
-			choice($.variable_declaration), // TODO: Multi-variable declaration
+			choice(field("variable_declaration", $.variable_declaration)), // TODO: Multi-variable declaration
 			"in",
-			$._expression,
+			field("collection", $._expression),
 			")",
-			optional($.control_structure_body)
+			field("control_structure_body", optional($.control_structure_body))
 		)),
 
 		while_statement: $ => seq(
 			"while",
 			"(",
-			$._expression,
+			field("condition", $._expression),
 			")",
-			choice(";", $.control_structure_body)
+			choice(";", field("control_structure_body", $.control_structure_body))
 		),
 
 		do_while_statement: $ => prec.right(seq(
 			"do",
-			optional($.control_structure_body),
+			field("control_structure_body", $.control_structure_body),
 			"while",
 			"(",
-			$._expression,
+			field("condition", $._expression),
 			")",
 		)),
 
@@ -545,11 +548,11 @@ module.exports = grammar({
 			$.spread_expression
 		),
 
-		postfix_expression: $ => prec.left(PREC.POSTFIX, seq($._expression, $._postfix_unary_operator)),
+		postfix_expression: $ => prec.left(PREC.POSTFIX, seq(field("expression", $._expression), $._postfix_unary_operator)),
 
 		call_expression: $ => prec.left(PREC.POSTFIX, seq($._expression, $.call_suffix)),
 
-		indexing_expression: $ => prec.left(PREC.POSTFIX, seq($._expression, $.indexing_suffix)),
+		indexing_expression: $ => prec.left(PREC.POSTFIX, seq(field("expression", $._expression), field("indexing_suffix", $.indexing_suffix))),
 
 		navigation_expression: $ => prec.left(PREC.POSTFIX, seq($._expression, $.navigation_suffix)),
 		
@@ -558,11 +561,11 @@ module.exports = grammar({
 		//       between 'unary_expression' and 'binary_expression'
 		//       in the array of LR(1) conflicts at the top.
 		
-		prefix_expression: $ => prec.right(PREC.PREFIX, seq(choice($.annotation, $.label, $._prefix_unary_operator), $._expression)),
+		prefix_expression: $ => prec.right(PREC.PREFIX, seq(choice($.annotation, $.label, $._prefix_unary_operator), seq(field("expression", $._expression)))),
 
 		as_expression: $ => prec.left(PREC.AS, seq($._expression, $._as_operator, $._type)),
 
-		spread_expression: $ => prec.left(PREC.SPREAD, seq("*", $._expression)),
+		spread_expression: $ => prec.left(PREC.SPREAD, seq("*", field("expression", $._expression))),
 
 		// Binary expressions
 
@@ -575,31 +578,29 @@ module.exports = grammar({
 			$.check_expression,
 			$.comparison_expression,
 			$.equality_expression,
-			$.comparison_expression,
-			$.equality_expression,
 			$.conjunction_expression,
 			$.disjunction_expression
 		),
 
-		multiplicative_expression: $ => prec.left(PREC.MULTIPLICATIVE, seq($._expression, $._multiplicative_operator, $._expression)),
+		multiplicative_expression: $ => prec.left(PREC.MULTIPLICATIVE, seq(field("left", $._expression), $._multiplicative_operator, field("right", $._expression))),
 		
-		additive_expression: $ => prec.left(PREC.ADDITIVE, seq($._expression, $._additive_operator, $._expression)),
+		additive_expression: $ => prec.left(PREC.ADDITIVE, seq(field("left", $._expression), $._additive_operator, field("right", $._expression))),
 
-		range_expression: $ => prec.left(PREC.RANGE, seq($._expression, "..", $._expression)),
+		range_expression: $ => prec.left(PREC.RANGE, seq(field("left", $._expression), "..", field("right", $._expression))),
 
-		infix_expression: $ => prec.left(PREC.INFIX, seq($._expression, $.simple_identifier, $._expression)),
+		infix_expression: $ => prec.left(PREC.INFIX, seq(field("left", $._expression), $.simple_identifier, field("right", $._expression))),
 
-		elvis_expression: $ => prec.left(PREC.ELVIS, seq($._expression, "?:", $._expression)),
+		elvis_expression: $ => prec.left(PREC.ELVIS, seq(field("left", $._expression), "?:", field("right", $._expression))),
 
-		check_expression: $ => prec.left(PREC.CHECK, seq($._expression, choice($._in_operator, $._is_operator), $._expression)),
+		check_expression: $ => prec.left(PREC.CHECK, seq(field("left", $._expression), choice($._in_operator, $._is_operator), field("right", $._expression))),
 		
-		comparison_expression: $ => prec.left(PREC.COMPARISON, seq($._expression, $._comparison_operator, $._expression)),
+		comparison_expression: $ => prec.left(PREC.COMPARISON, seq(field("left", $._expression), $._comparison_operator, field("right", $._expression))),
 
-		equality_expression: $ => prec.left(PREC.EQUALITY, seq($._expression, $._equality_operator, $._expression)),
+		equality_expression: $ => prec.left(PREC.EQUALITY, seq(field("left", $._expression), $._equality_operator, field("right", $._expression))),
 
-		conjunction_expression: $ => prec.left(PREC.CONJUNCTION, seq($._expression, "&&", $._expression)),
+		conjunction_expression: $ => prec.left(PREC.CONJUNCTION, seq(field("left", $._expression), "&&", field("right", $._expression))),
 
-		disjunction_expression: $ => prec.left(PREC.DISJUNCTION, seq($._expression, "||", $._expression)),
+		disjunction_expression: $ => prec.left(PREC.DISJUNCTION, seq(field("left", $._expression), "||", field("right", $._expression))),
 
 		// Suffixes
 
