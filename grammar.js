@@ -400,7 +400,7 @@ module.exports = grammar({
 		),
 
 		nullable_type: $ => seq(
-			choice($._type_reference, $.parenthesized_type),
+			field("type", choice($._type_reference, $.parenthesized_type)),
 			repeat1($._quest)
 		),
 
@@ -428,7 +428,7 @@ module.exports = grammar({
 
 		function_type: $ => seq(
 			optional(seq($._simple_user_type, ".")), // TODO: Support "real" types
-			$.function_type_parameters,
+			field("function_type_parameters", $.function_type_parameters),
 			"->",
 			$._type
 		),
@@ -436,11 +436,11 @@ module.exports = grammar({
 		// A higher-than-default precedence resolves the ambiguity with 'parenthesized_type'
 		function_type_parameters: $ => prec.left(1, seq(
 			"(",
-			optional(sep1(choice($.parameter, $._type), ",")),
+			field("parameters", optional(sep1(choice($.parameter, $._type), ","))),
 			")"
 		)),
 
-		parenthesized_type: $ => seq("(", $._type, ")"),
+		parenthesized_type: $ => seq("(", field("type", $._type), ")"),
 
 		parenthesized_user_type: $ => seq(
 			"(",
@@ -568,7 +568,7 @@ module.exports = grammar({
 		
 		prefix_expression: $ => prec.right(PREC.PREFIX, seq(choice($.annotation, $.label, $._prefix_unary_operator), seq(field("expression", $._expression)))),
 
-		as_expression: $ => prec.left(PREC.AS, seq($._expression, $._as_operator, $._type)),
+		as_expression: $ => prec.left(PREC.AS, seq(field("expression", $._expression), $._as_operator, field("type", $._type))),
 
 		spread_expression: $ => prec.left(PREC.SPREAD, seq("*", field("expression", $._expression))),
 
@@ -712,8 +712,8 @@ module.exports = grammar({
 
 		lambda_literal: $ => prec(PREC.LAMBDA_LITERAL, seq(
 			"{",
-			optional(seq(optional($.lambda_parameters), "->")),
-			optional($.statements),
+			optional(seq(field("lambda_parameters", optional($.lambda_parameters)), "->")),
+			field("statements", optional($.statements)),
 			"}"
 		)),
 
@@ -727,7 +727,7 @@ module.exports = grammar({
 			"fun",
 			optional(seq(sep1($._simple_user_type, "."), ".")), // TODO
 			"(", ")",
-			optional($.function_body)
+			field("function_body", optional($.function_body))
 		),
 
 		_function_literal: $ => choice(
