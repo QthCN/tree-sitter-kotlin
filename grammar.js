@@ -280,7 +280,7 @@ module.exports = grammar({
 		)),
 
 		function_body: $ => choice(
-		    field("block", $._block),
+		    $._block,
 		    seq("=", field("expression", $._expression))
 		),
 		
@@ -476,11 +476,11 @@ module.exports = grammar({
 		)),
 
 		control_structure_body: $ => choice(
-		    field("block", $._block),
+		    $._block,
 		    field("statement", $._statement)
 		),
 
-		_block: $ => prec(PREC.BLOCK, seq("{", optional($.statements), "}")),
+		_block: $ => prec(PREC.BLOCK, seq("{", field("block_statements", optional($.statements)), "}")),
 
 		_loop_statement: $ => choice(
 			$.for_statement,
@@ -658,7 +658,7 @@ module.exports = grammar({
 			$.super_expression,
 			$.if_expression,
 			$.when_expression,
-			$.try_expression,
+			$.try_catch_expression,
 			$.jump_expression
 		),
 
@@ -804,9 +804,9 @@ module.exports = grammar({
 
 		type_test: $ => seq($._is_operator, $._expression),
 
-		try_expression: $ => seq(
+		try_catch_expression: $ => seq(
 			"try",
-			field("block", $._block),
+			$._block,
 			choice(
 				seq(field("catch_blocks", repeat1($.catch_block)), field("finally_block", optional($.finally_block))),
 				field("finally_block", $.finally_block)
@@ -821,7 +821,14 @@ module.exports = grammar({
 			":",
 			$._type,
 			")",
-			field("block", $._block),
+			$._block,
+			// it looks like that tree-sitter will `eat` these tokens
+			optional(repeat(choice(
+			    "\n",
+			    "\r",
+			    "\t",
+			    " "
+			)))
 		),
 
 		finally_block: $ => seq("finally", $._block),
