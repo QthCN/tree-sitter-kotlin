@@ -249,7 +249,7 @@ module.exports = grammar({
 			$.secondary_constructor
 		),
 
-		anonymous_initializer: $ => seq("init", $._block),
+		anonymous_initializer: $ => seq("init", field("block", $._block)),
 
 		companion_object: $ => seq(
 			optional($.modifiers),
@@ -355,7 +355,7 @@ module.exports = grammar({
 			"constructor",
 			$._function_value_parameters,
 			optional(seq(":", $.constructor_delegation_call)),
-			optional($._block)
+			field("block", optional($._block))
 		),
 
 		constructor_delegation_call: $ => seq(choice("this", "super"), $.value_arguments),
@@ -751,15 +751,15 @@ module.exports = grammar({
 
 		if_expression: $ => prec.right(seq(
 			"if",
-			"(", $._expression, ")",
+			"(", field("condition_expression", $._expression), ")",
 			choice(
-				$.control_structure_body,
+				field("body", $.control_structure_body),
 				";",
 				seq(
-					optional($.control_structure_body),
+					field("body", optional($.control_structure_body)),
 					optional(";"),
 					"else",
-					choice($.control_structure_body, ";")
+					choice(field("else_body", $.control_structure_body), ";")
 				)
 			)
 		)),
@@ -772,37 +772,39 @@ module.exports = grammar({
 				$.variable_declaration,
 				"="
 			)),
-			$._expression,
+			field("expression", $._expression),
 			")",
 		),
 
 		when_expression: $ => seq(
 			"when",
-			optional($.when_subject),
+			field("subject", optional($.when_subject)),
 			"{",
-			repeat($.when_entry),
+			field("entries", repeat($.when_entry)),
 			"}"
 		),
 
 		when_entry: $ => seq(
 			choice(
-				seq($.when_condition, repeat(seq(",", $.when_condition))),
-				"else"
+				field("conditions", sep1($.when_condition, ",")),
+				field("conditions", $.when_entry_else)
 			),
 			"->",
-			$.control_structure_body,
+			field("body", $.control_structure_body),
 			optional($._semi)
 		),
 
-		when_condition: $ => seq(
-			$._expression,
-			$.range_test,
-			$.type_test
+		when_entry_else: $ => "else",
+
+		when_condition: $ => choice(
+			field("expression", $._expression),
+			field("range_test", $.range_test),
+			field("type_test", $.type_test)
 		),
 
-		range_test: $ => seq($._in_operator, $._expression),
+		range_test: $ => seq($._in_operator, field("expression", $._expression)),
 
-		type_test: $ => seq($._is_operator, $._expression),
+		type_test: $ => seq($._is_operator, field("expression", $._expression)),
 
 		try_catch_expression: $ => seq(
 			"try",
