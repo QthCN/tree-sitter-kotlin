@@ -559,7 +559,7 @@ module.exports = grammar({
 
 		indexing_expression: $ => prec.left(PREC.POSTFIX, seq(field("expression", $._expression), field("indexing_suffix", $.indexing_suffix))),
 
-		navigation_expression: $ => prec.left(PREC.POSTFIX, seq($._expression, $.navigation_suffix)),
+		navigation_expression: $ => prec.left(PREC.POSTFIX, seq(field("expression", $._expression), field("navigation_suffix", $.navigation_suffix))),
 		
 		// TODO: Postfix type arguments conflict naturally with 'less than'.
 		//       Possible solutions include listing this conflict
@@ -614,7 +614,7 @@ module.exports = grammar({
 		navigation_suffix: $ => seq(
 			$._member_access_operator,
 			choice(
-				$.simple_identifier,
+				field("identifier", $.simple_identifier),
 				$.parenthesized_expression,
 				"class"
 			)
@@ -806,10 +806,10 @@ module.exports = grammar({
 
 		try_expression: $ => seq(
 			"try",
-			$._block,
+			field("block", $._block),
 			choice(
-				seq(repeat1($.catch_block), optional($.finally_block)),
-				$.finally_block
+				seq(field("catch_blocks", repeat1($.catch_block)), field("finally_block", optional($.finally_block))),
+				field("finally_block", $.finally_block)
 			)
 		),
 
@@ -817,11 +817,11 @@ module.exports = grammar({
 			"catch",
 			"(",
 			repeat($.annotation),
-			$.simple_identifier,
+			field("identifier", $.simple_identifier),
 			":",
 			$._type,
 			")",
-			$._block,
+			field("block", $._block),
 		),
 
 		finally_block: $ => seq("finally", $._block),
