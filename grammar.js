@@ -633,14 +633,14 @@ module.exports = grammar({
 		call_suffix: $ => prec.left(seq(
 			// optional($.type_arguments), // TODO: Type args conflict with 'less than', see above
 			choice(
-				seq(field("value_arguments", optional($.value_arguments)), $.annotated_lambda),
+				seq(field("value_arguments", optional($.value_arguments)), field("annotated_lambda", $.annotated_lambda)),
 				field("value_arguments", $.value_arguments)
 			)
 		)),
 
 		annotated_lambda: $ => seq(
-			// repeat($.annotation),
-			// optional($.label),
+			repeat($.annotation),
+			optional($.label),
 			$.lambda_literal
 		),
 

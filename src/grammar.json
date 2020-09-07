@@ -3483,8 +3483,12 @@
                     }
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "annotated_lambda"
+                    "type": "FIELD",
+                    "name": "annotated_lambda",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "annotated_lambda"
+                    }
                   }
                 ]
               },
@@ -3504,6 +3508,25 @@
     "annotated_lambda": {
       "type": "SEQ",
       "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "annotation"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "label"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
         {
           "type": "SYMBOL",
           "name": "lambda_literal"
