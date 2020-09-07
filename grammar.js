@@ -283,6 +283,13 @@ module.exports = grammar({
 		    $._block,
 		    seq("=", field("expression", $._expression))
 		),
+
+		multi_variable_declaration: $ => seq(
+		    "(",
+		    sep1($.variable_declaration, ","),
+		    optional(","),
+		    ")"
+		),
 		
 		variable_declaration: $ => seq(
 			// repeat($.annotation), TODO
@@ -492,7 +499,10 @@ module.exports = grammar({
 			"for",
 			"(",
 			repeat($.annotation),
-			choice(field("variable_declaration", $.variable_declaration)), // TODO: Multi-variable declaration
+			choice(
+			    field("variable_declaration", $.variable_declaration),
+			    field("multi_variable_declaration", $.multi_variable_declaration)
+			), // TODO: Multi-variable declaration
 			"in",
 			field("collection", $._expression),
 			")",

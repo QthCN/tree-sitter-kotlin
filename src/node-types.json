@@ -4884,9 +4884,19 @@
           }
         ]
       },
+      "multi_variable_declaration": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "multi_variable_declaration",
+            "named": true
+          }
+        ]
+      },
       "variable_declaration": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "variable_declaration",
@@ -7134,6 +7144,21 @@
         },
         {
           "type": "interpolated_identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "multi_variable_declaration",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "variable_declaration",
           "named": true
         }
       ]
