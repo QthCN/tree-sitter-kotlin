@@ -1530,7 +1530,7 @@
             ]
           },
           {
-            "type": "CHOICE",
+            "type": "SEQ",
             "members": [
               {
                 "type": "CHOICE",
@@ -1550,6 +1550,18 @@
                   {
                     "type": "SYMBOL",
                     "name": "setter"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "getter"
                   },
                   {
                     "type": "BLANK"
@@ -1580,6 +1592,18 @@
       "content": {
         "type": "SEQ",
         "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "modifiers"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
           {
             "type": "STRING",
             "value": "get"
@@ -1639,6 +1663,18 @@
       "content": {
         "type": "SEQ",
         "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "modifiers"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
           {
             "type": "STRING",
             "value": "set"
@@ -5064,6 +5100,22 @@
             "type": "SYMBOL",
             "name": "_modifier"
           }
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "annotation"
+            },
+            {
+              "type": "REPEAT1",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_modifier"
+              }
+            }
+          ]
         }
       ]
     },
@@ -6099,6 +6151,9 @@
     ],
     [
       "jump_expression"
+    ],
+    [
+      "catch_block"
     ]
   ],
   "externals": [],

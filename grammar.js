@@ -74,7 +74,9 @@ module.exports = grammar({
         // Possible interpretations:
         // 1:  (jump_expression  'return'  •  _expression)
         // 2:  (jump_expression  'return')  •  '['  …
-		[$.jump_expression]
+		[$.jump_expression],
+
+		[$.catch_block]
 	],
 
 	extras: $ => [
@@ -308,17 +310,18 @@ module.exports = grammar({
 				seq("=", $._expression),
 				$.property_delegate
 			)),
-			choice(
+			seq(
 				// TODO: Getter-setter combinations
 				optional($.getter),
-				optional($.setter)
+				optional($.setter),
+				optional($.getter)
 			)
 		)),
 
 		property_delegate: $ => seq("by", $._expression),
 
 		getter: $ => prec.right(seq(
-			// optional(seq($._semi, $.modifiers)), // TODO
+			optional($.modifiers),
 			"get",
 			optional(seq(
 				"(", ")",
@@ -328,7 +331,7 @@ module.exports = grammar({
 		)),
 
 		setter: $ => prec.right(seq(
-			// optional(seq($._semi, $.modifiers)), // TODO
+			optional($.modifiers),
 			"set",
 			optional(seq(
 				"(",
@@ -897,7 +900,7 @@ module.exports = grammar({
 		// Modifiers
 		// ==========
 		
-		modifiers: $ => choice($.annotation, repeat1($._modifier)),
+		modifiers: $ => choice($.annotation, repeat1($._modifier), seq($.annotation, repeat1($._modifier))),
 
 		parameter_modifiers: $ => choice($.annotation, repeat1($.parameter_modifier)),
 

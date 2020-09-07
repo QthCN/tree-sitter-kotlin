@@ -5456,6 +5456,10 @@
           "named": true
         },
         {
+          "type": "modifiers",
+          "named": true
+        },
+        {
           "type": "nullable_type",
           "named": true
         },
@@ -9652,6 +9656,10 @@
         },
         {
           "type": "function_type",
+          "named": true
+        },
+        {
+          "type": "modifiers",
           "named": true
         },
         {
