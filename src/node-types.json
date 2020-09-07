@@ -377,11 +377,20 @@
       "required": true,
       "types": [
         {
-          "type": "simple_identifier",
+          "type": "multi_annotation",
+          "named": true
+        },
+        {
+          "type": "single_annotation",
           "named": true
         }
       ]
     }
+  },
+  {
+    "type": "annotation_use_site_target",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "anonymous_function",
@@ -7125,6 +7134,29 @@
     }
   },
   {
+    "type": "multi_annotation",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "annotation_use_site_target",
+          "named": true
+        },
+        {
+          "type": "constructor_invocation",
+          "named": true
+        },
+        {
+          "type": "user_type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "multi_line_string_literal",
     "named": true,
     "fields": {},
@@ -9696,6 +9728,29 @@
     "fields": {}
   },
   {
+    "type": "single_annotation",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "annotation_use_site_target",
+          "named": true
+        },
+        {
+          "type": "constructor_invocation",
+          "named": true
+        },
+        {
+          "type": "user_type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "source_file",
     "named": true,
     "fields": {},
@@ -12016,6 +12071,10 @@
     "named": false
   },
   {
+    "type": "delegate",
+    "named": false
+  },
+  {
     "type": "do",
     "named": false
   },
@@ -12041,6 +12100,10 @@
   },
   {
     "type": "false",
+    "named": false
+  },
+  {
+    "type": "field",
     "named": false
   },
   {
@@ -12156,11 +12219,19 @@
     "named": false
   },
   {
+    "type": "param",
+    "named": false
+  },
+  {
     "type": "point_star",
     "named": true
   },
   {
     "type": "private",
+    "named": false
+  },
+  {
+    "type": "property",
     "named": false
   },
   {
@@ -12180,6 +12251,10 @@
     "named": true
   },
   {
+    "type": "receiver",
+    "named": false
+  },
+  {
     "type": "reification_modifier",
     "named": true
   },
@@ -12197,6 +12272,10 @@
   },
   {
     "type": "set",
+    "named": false
+  },
+  {
+    "type": "setparam",
     "named": false
   },
   {

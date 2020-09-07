@@ -76,6 +76,12 @@ module.exports = grammar({
         // 2:  (jump_expression  'return')  •  '['  …
 		[$.jump_expression],
 
+        // Possible interpretations:
+
+        //  1:  '@'  (_unescaped_annotation  user_type)  •  '('  …
+        //  2:  '@'  (constructor_invocation  user_type  •  value_arguments)
+		[$.constructor_invocation, $._unescaped_annotation],
+
 		[$.catch_block]
 	],
 
@@ -985,10 +991,37 @@ module.exports = grammar({
 		// Annotations
 		// ==========
 		
-		annotation: $ => seq(
-			"@",
-			$.simple_identifier
-			// TODO
+		annotation: $ => choice(
+			$.single_annotation,
+			$.multi_annotation,
+		),
+
+		single_annotation: $ => choice(
+		    seq($.annotation_use_site_target, $._unescaped_annotation),
+		    seq("@", $._unescaped_annotation)
+		),
+
+		multi_annotation: $ => choice(
+		    seq(
+		        $.annotation_use_site_target,
+		        "[",
+		        repeat1($._unescaped_annotation),
+		        "]"
+		    ),
+		    seq(
+		        "@",
+		        "[",
+		        repeat1($._unescaped_annotation),
+		        "]"
+		    )
+		),
+
+		annotation_use_site_target: $ => seq(
+		    "@",
+		    choice(
+		        "field", "property", "get", "set", "receiver", "param", "setparam", "delegate"
+		    ),
+		    ":"
 		),
 
 		_unescaped_annotation: $ => choice(

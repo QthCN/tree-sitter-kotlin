@@ -5369,6 +5369,103 @@
       ]
     },
     "annotation": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "single_annotation"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "multi_annotation"
+        }
+      ]
+    },
+    "single_annotation": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "annotation_use_site_target"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_unescaped_annotation"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "@"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_unescaped_annotation"
+            }
+          ]
+        }
+      ]
+    },
+    "multi_annotation": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "annotation_use_site_target"
+            },
+            {
+              "type": "STRING",
+              "value": "["
+            },
+            {
+              "type": "REPEAT1",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_unescaped_annotation"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "]"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "@"
+            },
+            {
+              "type": "STRING",
+              "value": "["
+            },
+            {
+              "type": "REPEAT1",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_unescaped_annotation"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "]"
+            }
+          ]
+        }
+      ]
+    },
+    "annotation_use_site_target": {
       "type": "SEQ",
       "members": [
         {
@@ -5376,8 +5473,45 @@
           "value": "@"
         },
         {
-          "type": "SYMBOL",
-          "name": "simple_identifier"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "field"
+            },
+            {
+              "type": "STRING",
+              "value": "property"
+            },
+            {
+              "type": "STRING",
+              "value": "get"
+            },
+            {
+              "type": "STRING",
+              "value": "set"
+            },
+            {
+              "type": "STRING",
+              "value": "receiver"
+            },
+            {
+              "type": "STRING",
+              "value": "param"
+            },
+            {
+              "type": "STRING",
+              "value": "setparam"
+            },
+            {
+              "type": "STRING",
+              "value": "delegate"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ":"
         }
       ]
     },
@@ -6151,6 +6285,10 @@
     ],
     [
       "jump_expression"
+    ],
+    [
+      "constructor_invocation",
+      "_unescaped_annotation"
     ],
     [
       "catch_block"
