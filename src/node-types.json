@@ -423,24 +423,6 @@
     "type": "anonymous_initializer",
     "named": true,
     "fields": {
-      "block": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "statements",
-            "named": true
-          },
-          {
-            "type": "{",
-            "named": false
-          },
-          {
-            "type": "}",
-            "named": false
-          }
-        ]
-      },
       "block_statements": {
         "multiple": false,
         "required": false,
@@ -9452,24 +9434,6 @@
     "type": "secondary_constructor",
     "named": true,
     "fields": {
-      "block": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "statements",
-            "named": true
-          },
-          {
-            "type": "{",
-            "named": false
-          },
-          {
-            "type": "}",
-            "named": false
-          }
-        ]
-      },
       "block_statements": {
         "multiple": false,
         "required": false,

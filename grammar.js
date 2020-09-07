@@ -154,7 +154,7 @@ module.exports = grammar({
 		class_declaration: $ => prec.right(choice(
 			seq(
 				optional($.modifiers),
-				choice("class", "interface"),
+				choice("class", seq(optional("fun"), "interface")),
 				field("identifier", alias($.simple_identifier, $.type_identifier)),
 				optional($.type_parameters),
 				optional($.primary_constructor),
@@ -249,7 +249,7 @@ module.exports = grammar({
 			$.secondary_constructor
 		),
 
-		anonymous_initializer: $ => seq("init", field("block", $._block)),
+		anonymous_initializer: $ => seq("init", $._block),
 
 		companion_object: $ => seq(
 			optional($.modifiers),
@@ -362,7 +362,7 @@ module.exports = grammar({
 			"constructor",
 			$._function_value_parameters,
 			optional(seq(":", $.constructor_delegation_call)),
-			field("block", optional($._block))
+			optional($._block)
 		),
 
 		constructor_delegation_call: $ => seq(choice("this", "super"), $.value_arguments),
@@ -502,7 +502,7 @@ module.exports = grammar({
 			choice(
 			    field("variable_declaration", $.variable_declaration),
 			    field("multi_variable_declaration", $.multi_variable_declaration)
-			), // TODO: Multi-variable declaration
+			),
 			"in",
 			field("collection", $._expression),
 			")",
