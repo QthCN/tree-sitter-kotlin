@@ -902,7 +902,8 @@ module.exports = grammar({
 
 		directly_assignable_expression: $ => choice(
 			field("simple_identifier", $.simple_identifier),
-			$.indexing_expression
+			$.indexing_expression,
+			$.navigation_expression,
 			// TODO
 		),
 

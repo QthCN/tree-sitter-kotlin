@@ -4292,6 +4292,31 @@
         {
           "type": "STRING",
           "value": "super"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "<"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_type"
+                },
+                {
+                  "type": "STRING",
+                  "value": ">"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         }
       ]
     },
@@ -5101,6 +5126,10 @@
         {
           "type": "SYMBOL",
           "name": "indexing_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "navigation_expression"
         }
       ]
     },

@@ -3189,6 +3189,10 @@
         {
           "type": "indexing_expression",
           "named": true
+        },
+        {
+          "type": "navigation_expression",
+          "named": true
         }
       ]
     }
