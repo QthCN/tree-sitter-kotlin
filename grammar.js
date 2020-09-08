@@ -77,7 +77,6 @@ module.exports = grammar({
 		[$.jump_expression],
 
         // Possible interpretations:
-
         //  1:  '@'  (_unescaped_annotation  user_type)  •  '('  …
         //  2:  '@'  (constructor_invocation  user_type  •  value_arguments)
 		[$.constructor_invocation, $._unescaped_annotation],
@@ -278,8 +277,8 @@ module.exports = grammar({
 
 		function_declaration: $ => prec.right(seq( // TODO
 			optional($.modifiers),
-			optional($.type_parameters),
 			"fun",
+			optional($.type_parameters),
 			field("identifier", $.simple_identifier),
 			$._function_value_parameters,
 			optional(seq(":", $._type)),
@@ -310,7 +309,10 @@ module.exports = grammar({
 			choice("val", "var"),
 			optional($.type_parameters),
 			// TODO: Receiver type
-			field("variable_declaration", $.variable_declaration), // TODO: Multi-variable-declaration
+			choice(
+			    field("variable_declaration", $.variable_declaration),
+			    field("multi_variable_declaration", $.multi_variable_declaration)
+			),
 			optional($.type_constraints),
 			optional(choice(
 				seq("=", $._expression),
@@ -542,12 +544,13 @@ module.exports = grammar({
 		_semis: $ => /[\r\n]+/,
 		
 		assignment: $ => choice(
+		    // TODO use more specific rule than `$._expression`
 		    prec.left(PREC.ASSIGNMENT, seq(
 		                    field("directly_assignable_expression", $.directly_assignable_expression),
 		                    "=",
 		                    field("expression", $._expression))),
 			prec.left(PREC.ASSIGNMENT, seq($.directly_assignable_expression, $._assignment_and_operator, $._expression)),
-			// TODO
+
 		),
 		
 		// ==========
@@ -898,7 +901,8 @@ module.exports = grammar({
 		                           //       navigation operator 'split up' in Kotlin.
 
 		directly_assignable_expression: $ => choice(
-			field("simple_identifier", $.simple_identifier)
+			field("simple_identifier", $.simple_identifier),
+			$.indexing_expression
 			// TODO
 		),
 
@@ -906,7 +910,12 @@ module.exports = grammar({
 		// Modifiers
 		// ==========
 		
-		modifiers: $ => choice($.annotation, repeat1($._modifier), seq($.annotation, repeat1($._modifier))),
+		modifiers: $ => choice(
+		    $.annotation,
+		    repeat1($._modifier),
+		    seq($.annotation, repeat1($._modifier)),
+		    seq(repeat1($._modifier), $.annotation)
+		),
 
 		parameter_modifiers: $ => choice($.annotation, repeat1($.parameter_modifier)),
 

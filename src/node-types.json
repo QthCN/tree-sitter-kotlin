@@ -3173,7 +3173,7 @@
     "fields": {
       "simple_identifier": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "simple_identifier",
@@ -3181,6 +3181,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "indexing_expression",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -8563,9 +8573,19 @@
     "type": "property_declaration",
     "named": true,
     "fields": {
+      "multi_variable_declaration": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "multi_variable_declaration",
+            "named": true
+          }
+        ]
+      },
       "variable_declaration": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "variable_declaration",

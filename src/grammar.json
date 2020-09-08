@@ -1247,6 +1247,10 @@
             ]
           },
           {
+            "type": "STRING",
+            "value": "fun"
+          },
+          {
             "type": "CHOICE",
             "members": [
               {
@@ -1257,10 +1261,6 @@
                 "type": "BLANK"
               }
             ]
-          },
-          {
-            "type": "STRING",
-            "value": "fun"
           },
           {
             "type": "FIELD",
@@ -1480,12 +1480,25 @@
             ]
           },
           {
-            "type": "FIELD",
-            "name": "variable_declaration",
-            "content": {
-              "type": "SYMBOL",
-              "name": "variable_declaration"
-            }
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "variable_declaration",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "variable_declaration"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "multi_variable_declaration",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "multi_variable_declaration"
+                }
+              }
+            ]
           },
           {
             "type": "CHOICE",
@@ -5084,6 +5097,10 @@
             "type": "SYMBOL",
             "name": "simple_identifier"
           }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "indexing_expression"
         }
       ]
     },
@@ -5114,6 +5131,22 @@
                 "type": "SYMBOL",
                 "name": "_modifier"
               }
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "REPEAT1",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_modifier"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "annotation"
             }
           ]
         }
