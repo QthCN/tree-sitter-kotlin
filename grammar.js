@@ -81,6 +81,7 @@ module.exports = grammar({
         //  2:  '@'  (constructor_invocation  user_type  •  value_arguments)
 		[$.constructor_invocation, $._unescaped_annotation],
 
+        [$.super_expression],
 		[$.catch_block]
 	],
 
@@ -141,7 +142,8 @@ module.exports = grammar({
 
 		type_alias: $ => seq(
 			"typealias",
-			alias($.simple_identifier, $.type_identifier),
+			field("identifier", alias($.simple_identifier, $.type_identifier)),
+			optional($.type_arguments),
 			"=",
 			$._type
 		),
@@ -277,14 +279,26 @@ module.exports = grammar({
 
 		function_declaration: $ => prec.right(seq( // TODO
 			optional($.modifiers),
+			optional($.type_parameters),
 			"fun",
 			optional($.type_parameters),
+			optional($._receiver_types),
 			field("identifier", $.simple_identifier),
 			$._function_value_parameters,
 			optional(seq(":", $._type)),
 			optional($.type_constraints),
 			field("function_body", optional($.function_body))
 		)),
+
+        // TODO
+		_receiver_types: $ => repeat1(
+		    seq(optional($.type_modifiers),
+		        choice(
+		            $.simple_identifier
+                ),
+                optional($.type_arguments),
+                ".")
+		),
 
 		function_body: $ => choice(
 		    $._block,
@@ -767,6 +781,7 @@ module.exports = grammar({
 
 		super_expression: $ => seq(
 			"super",
+			optional(seq("<", $.simple_identifier, ">"))
 			// TODO optional(seq("<", $._type, ">")),
 			// TODO optional(seq("@", $.simple_identifier))
 		),
